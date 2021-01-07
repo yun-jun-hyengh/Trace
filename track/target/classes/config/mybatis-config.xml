@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC
+	"-//mybatis.org//DTD config 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<settings>
+		<setting name="cacheEnabled" value="false"/>
+		<setting name="useGeneratedKeys" value="false"/>
+		<setting name="mapUnderscoreToCamelCase" value="true"/>
+	</settings>
+	
+	<typeAliases>
+		<typeAlias type="com.jajangso.model.GojiBoardVO" alias="board"/>
+		<typeAlias type="com.jajangso.model.PreeBoardVO" alias="board1"/>
+		<typeAlias type="com.jajangso.model.MemberVO" alias="member"/>
+		<typeAlias type="com.jajangso.model.ReplyVO" alias="reply"/>
+		<typeAlias type="com.jajangso.model.JabdamBoardVO" alias="jabdam"/>
+		<typeAlias type="com.jajangso.model.DiaryVO" alias="diary"/>
+		<typeAlias type="com.jajangso.model.DietImageVO" alias="dietimage"/>
+		<typeAlias type="com.jajangso.model.JabdamReplyVO" alias="jabdamreply"/>
+		<typeAlias type="com.jajangso.model.GroupVO" alias="group"/>
+		<typeAlias type="com.jajangso.model.GroupBoardVO" alias="groupboard"/>
+	</typeAliases>
+</configuration>

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+	"-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jajangso.dao.MemberDAO">
+	<resultMap type="member" id="memResult">
+		<result property="memberid" column="memberid"/>
+		<result property="memberpw" column="memberpw"/>
+		<result property="membername" column="membername"/>
+		<result property="membergender" column="membergender"/>
+		<result property="member_birth_y" column="member_birth_y"/>
+		<result property="member_birth_m" column="member_birth_m"/>
+		<result property="member_birth_d" column="member_birth_d"/>
+		<result property="phone1" column="phone1"/>
+		<result property="phone2" column="phone2"/>
+		<result property="phone3" column="phone3"/>
+		<result property="sms" column="sms"/>
+		<result property="email" column="email"/>
+		<result property="zipcode" column="zipcode"/>
+		<result property="roadaddress" column="roadaddress"/>
+		<result property="jibunaddress" column="jibunaddress"/>
+		<result property="namujiaddress" column="namujiaddress"/>
+	</resultMap>
+	<!-- 회원가입 -->
+	<insert id="insertMember" parameterType="member">
+		INSERT INTO MEMBER(  MEMBERID
+		                   , MEMBERPW
+		                   , MEMBERNAME
+		                   , MEMBERGENDER
+		                   , MEMBER_BIRTH_Y
+		                   , MEMBER_BIRTH_M
+		                   , MEMBER_BIRTH_D
+		                   , PHONE1
+		                   , PHONE2
+		                   , PHONE3
+		                   , SMS
+		                   , EMAIL
+		                   , ZIPCODE
+		                   , ROADADDRESS
+		                   , JIBUNADDRESS
+		                   , NAMUJIADDRESS )
+		            VALUES(  #{memberid}
+		            	   , #{memberpw}
+		            	   , #{membername}
+		            	   , #{membergender}
+		            	   , #{member_birth_y}
+		            	   , #{member_birth_m}
+		            	   , #{member_birth_d}
+		            	   , #{phone1}
+		            	   , #{phone2}
+		            	   , #{phone3}
+		            	   , #{sms}
+		            	   , #{email}
+		            	   , #{zipcode}
+		            	   , #{roadAddress}
+		            	   , #{jibunAddress}
+		            	   , #{namujiAddress})
+	</insert>
+	
+	<!-- 로그인 -->
+	<select id="login" resultType="member" parameterType="member">
+		<![CDATA[
+			select * from MEMBER
+			where memberid=#{memberid} and memberpw=#{memberpw}
+		]]>
+	</select>
+	
+	<!-- 아이디 중복 체크 -->
+	<select id="idChk" resultType="int">
+		SELECT COUNT(*) FROM MEMBER
+		WHERE MEMBERID = #{memberid}
+	</select>
+	
+	<!-- 회원정보 수정 -->
+	<update id="memberUpdate">
+		UPDATE MEMBER SET
+		MEMBERPW = #{memberpw},
+		MEMBERNAME = #{membername}
+		WHERE MEMBERID = #{memberid}
+	</update>
+	
+	<!-- 아이디 찾기 -->
+	<select id="findid" resultType="member" parameterType="member">
+		<![CDATA[
+			select * from MEMBER
+			where membername=#{membername} and email=#{email}
+		]]>
+	</select>
+	
+	<!-- 패스워드 찾기 -->
+	<select id="findpw" resultType="member" parameterType="member">
+		<![CDATA[
+			select * from MEMBER
+			where memberid=#{memberid} and email=#{email}
+		]]>
+	</select>
+	
+	<!-- 회원탈퇴 -->
+	<delete id="memberDelete">
+		DELETE FROM MEMBER
+		WHERE MEMBERID = #{memberid}
+		AND MEMBERPW = #{memberpw}
+	</delete>
+	
+</mapper>

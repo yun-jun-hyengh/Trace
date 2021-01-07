@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+	"-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jajangso.dao.GojiBoardDAO">
+
+	
+	<select id="selectBoardList" resultType="board" parameterType="hashmap">
+<!-- 		select * from board2 order by num desc -->
+
+		select * from    
+		    (select rownum as st, A.* from 
+		        (select * from BOARD2
+		        <if test="searchWord != null"> 
+		         where ${searchType} like '%'||#{searchWord}||'%'
+		        </if>
+		        order by num desc)
+		    A where rownum &lt;= #{last})
+		where st &gt;= #{first}
+		
+	</select>
+
+	<insert id="insert" parameterType="board">
+		insert into BOARD2
+			(title, writer, content
+				<if test="img != null">
+				,img
+				</if>
+			)
+			values
+			(#{title}, #{writer}, #{content}
+				<if test="img != null">
+				,#{img}
+				</if>
+			)
+			
+	</insert>
+	
+	<select id="getArticle" resultType="board" parameterType="int">
+		select * from BOARD2
+		where num=#{num}
+	</select>
+	
+	<delete id="delete">
+		delete from BOARD2
+		where num=#{num}
+	</delete>
+	
+	<update id="update">
+		update BOARD2
+		set title = #{title}, content = #{content}
+		where num = #{num}
+	</update>
+	
+	<update id="updateViewCount" parameterType="int">
+		update BOARD2 set viewCount = viewCount + 1 where num = #{num}
+	</update>
+	
+	<select id="getPageCount" resultType="int" parameterType="hashmap">
+		select ceil(count(*)/#{perPage}) from BOARD2
+		<if test="searchWord != null"> 
+	        where ${searchType} like '%'||#{searchWord}||'%'
+		</if>
+	</select>
+</mapper>

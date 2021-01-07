@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+	"-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jajangso.dao.GroupDAO">
+	<!-- 그룹생성 -->
+	<insert id="makeGroup" parameterType="group">
+		insert into GROUPLIST(GRID, GRAGE, GRLOCAL, GRNAME, GRWRITER)
+		values(GROUPLIST_SEQ.NEXTVAL, #{grage}, #{grlocal}, #{grname}, #{grwriter})
+	</insert>
+	
+	<!-- 그룹리스트 -->
+	<select id="selectAllGroup" resultType="group">
+		SELECT GRID, GRWRITER, GRNAME, GRLOCAL, GRDATE
+		FROM GROUPLIST
+		ORDER BY GRID DESC
+	</select>
+	
+	<!-- 그룹방 내부 -->
+	<select id="getGroup" resultType="group" parameterType="int">
+		select * from GROUPLIST
+		where grid=#{grid}
+	</select>
+	
+	<!-- 그룹삭제 -->
+	<delete id="delete">
+		delete from GROUPLIST
+		where grid=#{grid}
+	</delete>
+	
+
+</mapper>

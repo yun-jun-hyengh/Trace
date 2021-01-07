@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+	"-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jajangso.dao.JabdamBoardDAO">
+	<!-- 댓글 목록 -->
+	<select id="list" resultType="jabdam" parameterType="com.jajangso.model.Criteria">
+		SELECT  BOARDNUM, 
+				TITLE, 
+				WRITER, 
+				REGISTDATE, 
+				VIEWCOUNT
+		FROM (
+				SELECT BOARDNUM,
+					   TITLE,
+					   WRITER,
+					   REGISTDATE,
+					   VIEWCOUNT,
+					   ROW_NUMBER() OVER(ORDER BY BOARDNUM DESC) AS RNUM
+				FROM JABDAMBOARD
+				WHERE 1=1
+					<include refid="search"></include>
+								  ) MP
+		WHERE RNUM BETWEEN #{rowStart} AND #{rowEnd}
+		ORDER BY BOARDNUM DESC
+	</select>
+	
+	<select id="listCount" resultType="int">
+		SELECT COUNT(BOARDNUM)
+		FROM JABDAMBOARD
+		WHERE 1=1
+		<include refid="search"></include>
+			AND BOARDNUM > 0
+	</select>
+	
+	<!-- 글 작성 -->
+	<insert id="insert">
+		insert into JABDAMBOARD
+		 (title, content, writer
+		 	<if test="img != null">
+		 	,img
+		 	</if>
+		 )
+		values
+		(#{title}, #{content}, #{writer}
+			<if test="img != null">
+			,#{img}
+			</if>	
+		)
+	</insert>
+	
+	<!-- 게시글 상세보기 -->
+	<select id="read" parameterType="int" resultType="jabdam">
+		select * from JABDAMBOARD
+		where BOARDNUM=#{boardnum}
+	</select>
+	
+	<!-- 게시물 삭제 -->
+	<delete id="delete">
+		delete from JABDAMBOARD
+		where BOARDNUM=#{boardnum}
+	</delete>
+	
+	<!-- 게시물 수정 -->
+	<update id="update" parameterType="jabdam">
+		UPDATE JABDAMBOARD
+		SET TITLE = #{title},
+			CONTENT = #{content}
+		WHERE BOARDNUM = #{boardnum}
+	</update>
+	
+	<!-- 조회수 증가 -->
+	<update id="updateViewCount" parameterType="int">
+		update JABDAMBOARD set viewCount = viewCount + 1 where boardnum = #{boardnum}
+	</update>
+	
+	<sql id="search">
+		<if test="searchType != null">
+			<if test="searchType == 't'.toString()">AND TITLE LIKE '%' || #{keyword} || '%'</if>
+			<if test="searchType == 'c'.toString()">AND CONTENT LIKE '%' || #{keyword} || '%'</if>
+			<if test="searchType == 'w'.toString()">AND WRITER LIKE '%' || #{keyword} || '%'</if>
+			<if test="searchType == 'tc'.toString()">AND (TITLE LIKE '%' || #{keyword} || '%') or (CONTENT LIKE '%' || #{keyword} || '%')</if>
+		</if>
+	</sql>
+	
+</mapper>

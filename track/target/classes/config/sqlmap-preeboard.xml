@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+	"-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jajangso.dao.PreeBoardDAO">
+	<select id="list" resultType="board1" parameterType="com.jajangso.model.Criteria">
+		SELECT NUM,
+			   TITLE,
+			   CONTENT,
+			   WRITER,
+			   REGISTDATE,
+			   VIEWCOUNT,
+			   IMG
+	    FROM (
+	    	   SELECT NUM,
+	    	   		  TITLE,
+	    	   		  CONTENT,
+	    	   		  WRITER,
+	    	   		  REGISTDATE,
+	    	   		  VIEWCOUNT,
+	    	   		  IMG,
+	    	   		  ROW_NUMBER() OVER(ORDER BY NUM DESC) AS RNUM
+	    	   FROM PREEBOARD
+	    	   WHERE 1=1
+	    	   	   <include refid="search"></include>
+	    					   ) MP
+	    WHERE RNUM BETWEEN #{rowStart} AND #{rowEnd}
+	    ORDER BY NUM DESC
+	</select>
+	
+	<select id="listCount" resultType="int">
+		SELECT COUNT(NUM)
+		  FROM PREEBOARD
+		  WHERE 1=1
+		<include refid="search"></include>
+		  AND NUM > 0
+	</select>
+	
+	<sql id="search">
+		<if test="searchType != null">
+			<if test="searchType == 't'.toString()">AND TITLE LIKE '%' || #{keyword} || '%'</if>
+			<if test="searchType == 'c'.toString()">AND CONTENT LIKE '%' || #{keyword} || '%'</if>
+			<if test="searchType == 'w'.toString()">AND WRITER LIKE '%' || #{keyword} || '%'</if>
+			<if test="searchType == 'tc'.toString()">AND (TITLE LIKE '%' || #{keyword} || '%') or (CONTENT LIKE '%' || #{keyword} || '%')</if>
+		</if>
+	</sql>
+	
+	
+	<select id="getBoard" resultType="board1" parameterType="int">
+		select * from PREEBOARD
+		where num=#{num}
+	</select>
+	
+	<insert id="insert" parameterType="board1">
+		insert into PREEBOARD
+			(title, writer, content
+				<if test="img != null">
+				,img
+				</if>
+			)
+			values
+			(#{title}, #{writer}, #{content}
+				<if test="img != null">
+				,#{img}
+				</if>
+			)
+			
+	</insert>
+	
+	<delete id="delete">
+		delete from PREEBOARD
+		where num=#{num}
+	</delete>
+	
+	<update id="updateViewCount" parameterType="int">
+		update PREEBOARD set viewCount = viewCount + 1 where num = #{num}
+	</update>
+	
+	<update id="update">
+		update PREEBOARD
+		set title = #{title}, content = #{content}
+		where num = #{num}
+	</update>
+
+</mapper>

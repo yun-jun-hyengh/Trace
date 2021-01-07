@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+	"-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jajangso.dao.DiaryDAO">
+	<!-- 게시글 작성 -->
+	<insert id="insertDiary" parameterType="diary">
+		insert into diary(no, memberid, title, content, ckshare, image)
+		values(DIARY_SEQ.NEXTVAL, #{memberid}, #{title}, #{content}, #{ckshare}, #{image})
+	</insert>
+	
+	<!-- 다이어리 리스트 -->
+	<select id="selectAllDiary" resultType="diary" parameterType="String">
+		select * from diary
+		where memberid=#{memberid}
+		order by no desc
+	</select>
+	
+	<!-- 공개게시판 -->
+	<select id="shareAllDiary" resultType="diary">
+		select * from diary
+		where
+		ckshare='true'
+		order by no desc
+	</select>
+	
+	<!-- 상세보기 -->
+	<select id="selectOneDiary" resultType="diary" parameterType="diary">
+		select * from diary where memberid=#{memberid} and no=#{no}
+	</select>
+	
+	<!-- 일기 삭제 -->
+	<delete id="deleteDiary" parameterType="diary">
+		delete diary
+		where
+		memberid=#{memberid} and no=#{no}
+	</delete>
+	
+	<!-- 일기 수정 -->
+	<update id="updateDiary" parameterType="diary">
+		update diary set
+		title=#{title}, content=#{content}, ckshare=#{ckshare}
+		<if test="image != null">
+			,image=#{image}
+		</if>
+		where memberid=#{memberid} and
+		no=#{no}
+	</update>
+	
+	<update id="updateViewCount" parameterType="int">
+		update diary
+		set readcnt = readcnt + 1
+		where no = #{no}
+	</update>
+	
+</mapper>

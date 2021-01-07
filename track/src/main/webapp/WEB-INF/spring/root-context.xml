@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mybatis-spring="http://mybatis.org/schema/mybatis-spring"
+	xsi:schemaLocation="http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring-1.2.xsd
+		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+	
+	<!-- Root Context: defines shared resources visible to all other web components -->
+	
+	<bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
+		<constructor-arg>
+			<bean class="com.zaxxer.hikari.HikariConfig">
+				<constructor-arg>
+					<props>
+						<prop key="jdbcUrl">jdbc:oracle:thin:@localhost:1521:xe</prop>
+						<prop key="username">scott</prop>
+						<prop key="password">tiger</prop>
+					</props>
+				</constructor-arg>
+				<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"/>
+				<property name="minimumIdle" value="5"/>
+				<property name="maximumPoolSize" value="10"/>
+				<property name="connectionTestQuery" value="select 1 from sys.dual"/>
+				<property name="connectionTimeout" value="30000"/>
+			</bean>
+		</constructor-arg>
+	</bean>
+	
+	<!-- 파일 업로드 -->
+	<bean id="multipartResolver"
+		  class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="maxUploadSize" value="10485760"/>
+		<property name="maxInMemorySize" value="10485760"/>
+		<property name="defaultEncoding" value="utf-8"/>
+	</bean>
+	
+	<!-- myBatis sqlSessionFactory & sqlSessionTemplate -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="configLocation" value="classpath:config/mybatis-config.xml"/>
+		<property name="mapperLocations">
+			<list>
+				<value>classpath:config/sqlmap-board.xml</value>
+				<value>classpath:config/sqlmap-preeboard.xml</value>
+				<value>classpath:config/sqlmap-member.xml</value>
+				<value>classpath:config/sqlmap-reply.xml</value>
+				<value>classpath:config/sqlmap-jabdamboard.xml</value>
+				<value>classpath:config/sqlmap-diary.xml</value>
+				<value>classpath:config/sqlmap-dietimage.xml</value>
+				<value>classpath:config/sqlmap-jabdamreply.xml</value>
+				<value>classpath:config/sqlmap-group.xml</value>
+				<value>classpath:config/sqlmap-groupboard.xml</value>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate" destroy-method="clearCache">
+		<constructor-arg ref="sqlSessionFactory"/>
+	</bean>
+	<context:component-scan base-package="com.jajangso.service"></context:component-scan>
+	<mybatis-spring:scan base-package="com.jajangso.dao"/>
+	
+	
+	
+		
+</beans>
